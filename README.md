@@ -31,8 +31,8 @@ Welcome to the **Computer Networks (CN) Laboratory** repository! This repository
 <!-- EXPERIMENTS_STATS_START -->
 | Metric | Value |
 | :--- | :--- |
-| 🧪 **Completed Experiments** | **4 / 10** |
-| 📊 **Completion Rate** | `[████████░░░░░░░░░░░░] 40%` |
+| 🧪 **Completed Experiments** | **2 / 10** |
+| 📊 **Completion Rate** | `[████░░░░░░░░░░░░░░░░] 20%` |
 | 📅 **Last Updated** | `2026-07-29` |
 | ⚡ **Status** | ![Active Development](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square) |
 <!-- EXPERIMENTS_STATS_END -->
@@ -44,10 +44,8 @@ Welcome to the **Computer Networks (CN) Laboratory** repository! This repository
 <!-- EXPERIMENTS_TABLE_START -->
 | Exp # | Experiment Title | Assets & Topology | Status | Folder Link |
 | :---: | :--- | :--- | :---: | :---: |
-| **Exp-01** | Basic Local Network Setup & PC Configuration | [`💾 Topology (.pkt)`](Experiments/Exp-01_Basic_Local_Network/topology.pkt) • [`🖼️ Diagram`](Experiments/Exp-01_Basic_Local_Network/topology.png) • [`📄 Report`](Experiments/Exp-01_Basic_Local_Network/report.pdf) • [`📝 Notes`](Experiments/Exp-01_Basic_Local_Network/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-01_Basic_Local_Network`](Experiments/Exp-01_Basic_Local_Network) |
-| **Exp-02** | Network Topologies (Bus, Star, Ring & Mesh) | [`💾 Topology (.pkt)`](Experiments/Exp-02_Network_Topologies/topology.pkt) • [`🖼️ Diagram`](Experiments/Exp-02_Network_Topologies/topology.png) • [`📝 Notes`](Experiments/Exp-02_Network_Topologies/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-02_Network_Topologies`](Experiments/Exp-02_Network_Topologies) |
-| **Exp-03** | Subnetting and VLAN Configuration | *(No .pkt file)* • [`📝 Notes`](Experiments/Exp-03_Subnetting_and_VLANs/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-03_Subnetting_and_VLANs`](Experiments/Exp-03_Subnetting_and_VLANs) |
-| **Exp-04** | RIP Routing | [`💾 Topology (.pkt)`](Experiments/Exp-04_RIP_Routing/rip_topology.pkt) • [`📝 Notes`](Experiments/Exp-04_RIP_Routing/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-04_RIP_Routing`](Experiments/Exp-04_RIP_Routing) |
+| **Exp-01** | Basic Local Network Setup & PC Configuration | [`💾 Topology (.pkt)`](Experiments/Exp-01_Basic_Local_Network/Exp-01_Basic_Local_Network.pkt) • [`📄 Report`](Experiments/Exp-01_Basic_Local_Network/report.pdf) • [`📝 Notes`](Experiments/Exp-01_Basic_Local_Network/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-01_Basic_Local_Network`](Experiments/Exp-01_Basic_Local_Network) |
+| **Exp-02** | Network Topologies (Bus, Star, Ring & Mesh) | [`💾 Topology (.pkt)`](Experiments/Exp-02_Network_Topologies/Exp-02_Network_Topologies.pkt) • [`📝 Notes`](Experiments/Exp-02_Network_Topologies/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-02_Network_Topologies`](Experiments/Exp-02_Network_Topologies) |
 <!-- EXPERIMENTS_TABLE_END -->
 
 ---
