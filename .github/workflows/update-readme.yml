@@ -1,0 +1,38 @@
+name: Auto-Update README Experiments Table
+
+on:
+  push:
+    paths:
+      - 'Experiments/**'
+      - 'scripts/**'
+      - '.github/workflows/update-readme.yml'
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run README Generator Script
+        run: python scripts/update_readme.py
+
+      - name: Commit and Push README Updates
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(readme): 🤖 auto-generate experiment READMEs & update main metrics [skip ci]"
+          file_pattern: 'README.md Experiments/**/README.md'
+          commit_author: 'GitHub Actions Bot <actions@github.com>'
