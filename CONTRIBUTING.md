@@ -1,33 +1,37 @@
 # Contributing to Computer Networks Lab
 
-Contributing to this lab is designed to be **as simple as possible**! ⚡
+Contributing to this lab directly on **GitHub.com (Web UI)** is designed to be **100% automated and effortless**! You don't even need to use Git on your computer. ⚡
 
 ---
 
-## ⚡ Super Easy 1-Step Workflow
+## 🌐 How to Upload Experiments Directly on GitHub.com
 
-When you complete a new experiment in Cisco Packet Tracer:
+When you finish a new experiment in Cisco Packet Tracer:
 
-1. Create a folder under `Experiments/` following the naming convention:
+### 1. Go to your GitHub Repository
+Open [`github.com/shreyashmane-dev/computer-networks-lab`](https://github.com/shreyashmane-dev/computer-networks-lab) in your web browser.
+
+### 2. Upload Your File
+1. Click **Add file** ➔ **Upload files** (top right of the repository view).
+2. Drag and drop your `.pkt` file.
+3. In the filename input or commit message, path it to a folder under `Experiments/`:
    ```text
-   Experiments/Exp-XX_Title_of_Experiment
+   Experiments/Exp-05_OSPF_Routing/topology.pkt
    ```
-   *Example: `Experiments/Exp-04_Static_Routing`*
-
-2. Upload your `.pkt` topology file into that folder (e.g. `topology.pkt` or `Exp-04.pkt`).
-
-3. **Push to GitHub!**
+4. Click **Commit changes**.
 
 ---
 
-## 🤖 What Happens Automatically
+## 🤖 What Happens Automatically in the Cloud
 
-When you push your `.pkt` file:
-1. **Auto-Generated Experiment README**: The system detects your `.pkt` file and automatically generates a clean `README.md` inside `Experiments/Exp-XX_.../` with objectives, topology links, addressing tables, and verification steps.
-2. **Auto-Updated Main README**: The experiment table, total experiment count, completion progress bar (`[██████░░░░░░░░░░░░░░] 30%`), and last updated date on the root `README.md` are updated automatically.
+As soon as you click **Commit changes** on GitHub.com:
+
+1. **GitHub Actions Triggered**: The automated workflow (`.github/workflows/update-readme.yml`) starts running automatically in the background.
+2. **Auto-Generated Experiment README**: If you didn't include a `README.md`, GitHub Actions automatically generates a clean `README.md` inside your experiment folder (`Experiments/Exp-05_OSPF_Routing/README.md`) with objectives, topology links, and an addressing table.
+3. **Auto-Updated Main README**: The completed experiment count, visual progress bar (`[██████████░░░░░░░░░░] 50%`), and summary table in the root `README.md` are updated automatically within seconds!
 
 ---
 
-## 🖼️ Optional Assets (If You Want Extra Detail)
-- `topology.png`: Add a screenshot of your Packet Tracer diagram to embed it in the experiment notes.
-- `report.pdf`: Add a lab assignment PDF or observation table.
+## 🖼️ Optional Files You Can Upload
+- `topology.png`: Network diagram screenshot to visually embed in the experiment notes.
+- `report.pdf`: Assignment report or observation sheet.

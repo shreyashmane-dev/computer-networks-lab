@@ -77,15 +77,17 @@ computer-networks-lab/
 
 ---
 
-## 🚀 How to Add New Experiments
+## 🚀 How to Add New Experiments (Directly on GitHub.com)
 
-Adding a new experiment is completely automated:
+Adding a new experiment can be done **directly in your web browser** without using terminal commands:
 
-1. Create a new folder under `Experiments/` following the pattern `Exp-XX_Title` (e.g. `Exp-03_Subnetting_VLANs`).
-2. Add your Cisco Packet Tracer file (`topology.pkt`), screenshot (`topology.png`), notes (`README.md`), and report (`report.pdf`).
-3. Push to GitHub! The GitHub Action will automatically detect the new folder and update this `README.md`.
+1. Open your repository on **GitHub.com** and click **Add file** ➔ **Upload files**.
+2. Drag & drop your `.pkt` file and specify the experiment folder path, e.g.:
+   `Experiments/Exp-05_OSPF_Routing/topology.pkt`
+3. Click **Commit changes**.
+4. 🤖 **GitHub Actions** will automatically run in the background, generate `Experiments/Exp-05_OSPF_Routing/README.md`, update the completed count, progress bar, and summary table above within seconds!
 
-For detailed instructions, see [CONTRIBUTING.md](CONTRIBUTING.md).
+For detailed steps, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
