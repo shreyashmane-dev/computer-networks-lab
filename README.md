@@ -122,7 +122,7 @@ For detailed steps, see [CONTRIBUTING.md](CONTRIBUTING.md).
 **CN Lab Student / Maintainer**
 - 🐙 GitHub: [@shreyashmane-dev](https://github.com/shreyashmane-dev)
 - 🏫 Course: Computer Networks Laboratory
-- 📧 Contact: `student@example.com`
+- 📧 Contact: `shreyashmane649@gmail.com`
 
 ---
 
