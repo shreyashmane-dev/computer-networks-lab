@@ -3,10 +3,10 @@
 update_readme.py
 
 Automated script for Computer Networks Lab repository:
-1. Scans `Experiments/` for experiment folders.
-2. Automatically generates an experiment-specific `README.md` inside any experiment
-   folder if only a `.pkt` file is uploaded by the user.
-3. Updates the root `README.md` statistics and summary table with direct 📥 Download .pkt links
+1. Scans `Experiments/` and `Cisco_Labs/` for lab folders.
+2. Automatically generates an experiment/lab-specific `README.md` inside any folder
+   if only a `.pkt` file is uploaded by the user.
+3. Updates the root `README.md` statistics and both summary tables with direct 📥 Download .pkt links
    and 📁 View Details shortcuts.
 """
 
@@ -29,6 +29,7 @@ RAW_BASE_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/raw/{BRANCH}"
 # Paths
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 EXPERIMENTS_DIR = REPO_ROOT / "Experiments"
+CISCO_LABS_DIR = REPO_ROOT / "Cisco_Labs"
 README_PATH = REPO_ROOT / "README.md"
 
 # Target number of experiments for progress calculation
@@ -36,19 +37,19 @@ TARGET_EXPERIMENTS = 10
 
 
 def natural_sort_key(s):
-    """Sort strings containing numbers naturally (e.g. Exp-01, Exp-02, Exp-10)."""
+    """Sort strings containing numbers naturally (e.g. Exp-01, Exp-02, Exp-10, Lab-01)."""
     return [int(text) if text.isdigit() else text.lower() for text in re.split(r"(\d+)", str(s))]
 
 
 def clean_title_from_folder(folder_name: str) -> str:
-    """Format folder name into a clean title (e.g. Exp-04_Static_Routing -> Static Routing)."""
-    cleaned = re.sub(r"^Exp-?\d+_?", "", folder_name, flags=re.IGNORECASE)
+    """Format folder name into a clean title (e.g. Lab-01_Multi_Area_OSPF -> Multi Area OSPF)."""
+    cleaned = re.sub(r"^(Exp|Lab|Proj|Project)-?\d+_?", "", folder_name, flags=re.IGNORECASE)
     cleaned = cleaned.replace("_", " ").strip()
     return cleaned if cleaned else folder_name
 
 
 def get_title_from_readme(exp_readme: Path, folder_name: str) -> str:
-    """Attempt to extract the title from an existing experiment README.md."""
+    """Attempt to extract the title from an existing README.md."""
     if exp_readme.is_file():
         try:
             with open(exp_readme, "r", encoding="utf-8") as f:
@@ -56,7 +57,7 @@ def get_title_from_readme(exp_readme: Path, folder_name: str) -> str:
                     line = line.strip()
                     if line.startswith("#"):
                         title = line.lstrip("#").strip()
-                        title = re.sub(r"^Exp(eriment)?[\s\-_]*\d+[\s\-_:]*", "", title, flags=re.IGNORECASE).strip()
+                        title = re.sub(r"^(Exp|Experiment|Lab|Proj|Project)[\s\-_]*\d+[\s\-_:]*", "", title, flags=re.IGNORECASE).strip()
                         if title:
                             return title
         except Exception:
@@ -64,12 +65,12 @@ def get_title_from_readme(exp_readme: Path, folder_name: str) -> str:
     return clean_title_from_folder(folder_name)
 
 
-def generate_experiment_readme_content(exp_code: str, title: str, folder_name: str, pkt_file: str = None) -> str:
-    """Generate default README.md content for an experiment folder."""
+def generate_lab_readme_content(item_code: str, title: str, section_dir_name: str, folder_name: str, pkt_file: str = None) -> str:
+    """Generate default README.md content for a lab/experiment folder."""
     pkt_info = f"`{pkt_file}`" if pkt_file else "Cisco Packet Tracer (`.pkt`)"
-    pkt_download = f"[📥 **Download {pkt_file}**]({RAW_BASE_URL}/Experiments/{folder_name}/{pkt_file})" if pkt_file else ""
+    pkt_download = f"[📥 **Download {pkt_file}**]({RAW_BASE_URL}/{section_dir_name}/{folder_name}/{pkt_file})" if pkt_file else ""
     
-    content = f"""# {exp_code}: {title}
+    content = f"""# {item_code}: {title}
 
 ## 🎯 Objectives
 - Build and configure the network topology in Cisco Packet Tracer.
@@ -86,7 +87,7 @@ def generate_experiment_readme_content(exp_code: str, title: str, folder_name: s
 
 ## 📐 Network Topology & Configuration
 
-> *Upload a `topology.png` screenshot to this experiment folder to visually display the diagram here.*
+> *Upload a `topology.png` screenshot to this lab folder to visually display the diagram here.*
 
 ### Device Addressing Table Template
 
@@ -105,57 +106,62 @@ def generate_experiment_readme_content(exp_code: str, title: str, folder_name: s
     return content
 
 
-def ensure_experiment_readme(exp_dir: Path, exp_code: str, title: str, pkt_file: str = None) -> bool:
-    """Ensure an experiment folder has a README.md file. Creates one if missing."""
-    exp_readme = exp_dir / "README.md"
-    if not exp_readme.exists():
-        content = generate_experiment_readme_content(exp_code, title, exp_dir.name, pkt_file)
-        with open(exp_readme, "w", encoding="utf-8") as f:
+def ensure_lab_readme(lab_dir: Path, section_dir_name: str, item_code: str, title: str, pkt_file: str = None) -> bool:
+    """Ensure a lab folder has a README.md file. Creates one if missing."""
+    lab_readme = lab_dir / "README.md"
+    if not lab_readme.exists():
+        content = generate_lab_readme_content(item_code, title, section_dir_name, lab_dir.name, pkt_file)
+        with open(lab_readme, "w", encoding="utf-8") as f:
             f.write(content)
-        print(f"[+] Auto-generated experiment README: {exp_dir.name}/README.md")
+        print(f"[+] Auto-generated lab README: {section_dir_name}/{lab_dir.name}/README.md")
         return True
     return False
 
 
-def scan_experiments():
-    """Scan the Experiments directory, auto-generate missing experiment READMEs, and build dataset."""
-    if not EXPERIMENTS_DIR.exists():
+def scan_directory(target_dir: Path, default_prefix: str = "Exp"):
+    """Scan a directory for folders, auto-generate missing READMEs, and build dataset."""
+    if not target_dir.exists():
         return []
 
-    exp_folders = [
-        d for d in EXPERIMENTS_DIR.iterdir()
+    section_name = target_dir.name
+    folders = [
+        d for d in target_dir.iterdir()
         if d.is_dir() and not d.name.startswith(".")
     ]
-    exp_folders.sort(key=lambda d: natural_sort_key(d.name))
+    folders.sort(key=lambda d: natural_sort_key(d.name))
 
-    experiments = []
-    for exp_dir in exp_folders:
-        folder_name = exp_dir.name
+    items = []
+    for lab_dir in folders:
+        folder_name = lab_dir.name
         
-        # Match Exp number
-        match = re.match(r"^Exp-?(\d+)", folder_name, re.IGNORECASE)
-        exp_num = match.group(1) if match else "N/A"
-        exp_code = f"Exp-{exp_num}" if exp_num != "N/A" else folder_name
+        # Match number
+        match = re.search(r"(\d+)", folder_name)
+        item_num = match.group(1) if match else "N/A"
+        
+        # Match prefix or use default
+        prefix_match = re.match(r"^(Exp|Lab|Proj|Project)", folder_name, re.IGNORECASE)
+        prefix = prefix_match.group(1).capitalize() if prefix_match else default_prefix
+        item_code = f"{prefix}-{item_num}" if item_num != "N/A" else folder_name
 
-        exp_readme = exp_dir / "README.md"
-        title = get_title_from_readme(exp_readme, folder_name)
+        lab_readme = lab_dir / "README.md"
+        title = get_title_from_readme(lab_readme, folder_name)
 
         # Detect files
-        pkt_file = next((f.name for f in exp_dir.iterdir() if f.is_file() and f.suffix.lower() == ".pkt"), None)
-        png_file = next((f.name for f in exp_dir.iterdir() if f.is_file() and f.suffix.lower() in [".png", ".jpg", ".jpeg", ".svg"]), None)
-        pdf_file = next((f.name for f in exp_dir.iterdir() if f.is_file() and f.suffix.lower() == ".pdf"), None)
+        pkt_file = next((f.name for f in lab_dir.iterdir() if f.is_file() and f.suffix.lower() == ".pkt"), None)
+        png_file = next((f.name for f in lab_dir.iterdir() if f.is_file() and f.suffix.lower() in [".png", ".jpg", ".jpeg", ".svg"]), None)
+        pdf_file = next((f.name for f in lab_dir.iterdir() if f.is_file() and f.suffix.lower() == ".pdf"), None)
 
-        # Auto-create experiment README if missing
-        ensure_experiment_readme(exp_dir, exp_code, title, pkt_file)
+        # Auto-create README if missing
+        ensure_lab_readme(lab_dir, section_name, item_code, title, pkt_file)
 
-        has_readme = (exp_dir / "README.md").is_file()
-        rel_path = f"Experiments/{folder_name}".replace("\\", "/")
+        has_readme = (lab_dir / "README.md").is_file()
+        rel_path = f"{section_name}/{folder_name}".replace("\\", "/")
 
         # Build direct raw download link for .pkt file
         raw_pkt_url = f"{RAW_BASE_URL}/{rel_path}/{pkt_file}" if pkt_file else None
 
-        experiments.append({
-            "code": exp_code,
+        items.append({
+            "code": item_code,
             "folder_name": folder_name,
             "title": title,
             "rel_path": rel_path,
@@ -166,7 +172,7 @@ def scan_experiments():
             "has_readme": has_readme,
         })
 
-    return experiments
+    return items
 
 
 def generate_text_progress_bar(percentage: int, width: int = 20) -> str:
@@ -176,7 +182,7 @@ def generate_text_progress_bar(percentage: int, width: int = 20) -> str:
     return bar
 
 
-def generate_stats_block(experiments_count: int, target_count: int, last_updated: str) -> str:
+def generate_stats_block(experiments_count: int, target_count: int, cisco_labs_count: int, last_updated: str) -> str:
     """Generate statistics section markdown."""
     percentage = int((experiments_count / target_count) * 100) if target_count > 0 else 0
     percentage = min(percentage, 100)
@@ -184,28 +190,29 @@ def generate_stats_block(experiments_count: int, target_count: int, last_updated
 
     stats_md = f"""| Metric | Value |
 | :--- | :--- |
-| 🧪 **Completed Experiments** | **{experiments_count} / {target_count}** |
+| 🧪 **Completed Core Experiments** | **{experiments_count} / {target_count}** |
+| 📡 **Additional Cisco Labs & Projects** | **{cisco_labs_count} Total** |
 | 📊 **Completion Rate** | `[{bar}] {percentage}%` |
 | 📅 **Last Updated** | `{last_updated}` |
 | ⚡ **Status** | ![Active Development](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square) |"""
     return stats_md
 
 
-def generate_table_block(experiments) -> str:
-    """Generate the experiments markdown table with direct download buttons and folder links."""
-    if not experiments:
-        return "*No experiments found yet. Add folders under `Experiments/Exp-XX_...` to populate this table.*"
+def generate_table_block(items, empty_message: str) -> str:
+    """Generate markdown table with direct download buttons and folder links."""
+    if not items:
+        return f"*{empty_message}*"
 
     table_lines = [
-        "| Exp # | Experiment Title | 📥 Direct Download (.pkt) | 📁 Explore Details | Included Assets | Status |",
+        "| ID # | Title / Topic | 📥 Direct Download (.pkt) | 📁 Explore Details | Included Assets | Status |",
         "| :---: | :--- | :---: | :---: | :--- | :---: |"
     ]
 
-    for exp in experiments:
-        code = exp["code"]
-        title = exp["title"]
-        rel_path = exp["rel_path"]
-        raw_pkt_url = exp["raw_pkt_url"]
+    for item in items:
+        code = item["code"]
+        title = item["title"]
+        rel_path = item["rel_path"]
+        raw_pkt_url = item["raw_pkt_url"]
 
         # Download button/link
         if raw_pkt_url:
@@ -218,11 +225,11 @@ def generate_table_block(experiments) -> str:
 
         # Additional assets indicator
         assets = []
-        if exp["png_file"]:
-            assets.append(f"[`🖼️ Diagram`]({rel_path}/{exp['png_file']})")
-        if exp["pdf_file"]:
-            assets.append(f"[`📄 Report`]({rel_path}/{exp['pdf_file']})")
-        if exp["has_readme"]:
+        if item["png_file"]:
+            assets.append(f"[`🖼️ Diagram`]({rel_path}/{item['png_file']})")
+        if item["pdf_file"]:
+            assets.append(f"[`📄 Report`]({rel_path}/{item['pdf_file']})")
+        if item["has_readme"]:
             assets.append(f"[`📝 Notes`]({rel_path}/README.md)")
 
         assets_str = " • ".join(assets) if assets else "*(Notes Auto-Generated)*"
@@ -239,13 +246,21 @@ def update_readme():
         print(f"Error: {README_PATH} does not exist.")
         return
 
-    experiments = scan_experiments()
-    count = len(experiments)
-    target = max(TARGET_EXPERIMENTS, count)
+    # Ensure directories exist
+    EXPERIMENTS_DIR.mkdir(exist_ok=True)
+    CISCO_LABS_DIR.mkdir(exist_ok=True)
+
+    experiments = scan_directory(EXPERIMENTS_DIR, default_prefix="Exp")
+    cisco_labs = scan_directory(CISCO_LABS_DIR, default_prefix="Lab")
+
+    exp_count = len(experiments)
+    cisco_count = len(cisco_labs)
+    target = max(TARGET_EXPERIMENTS, exp_count)
     today_str = datetime.now().strftime("%Y-%m-%d")
 
-    stats_block = generate_stats_block(count, target, today_str)
-    table_block = generate_table_block(experiments)
+    stats_block = generate_stats_block(exp_count, target, cisco_count, today_str)
+    exp_table_block = generate_table_block(experiments, "No experiments found yet. Add folders under `Experiments/Exp-XX_...` to populate this table.")
+    cisco_table_block = generate_table_block(cisco_labs, "No additional Cisco labs uploaded yet. Upload folders under `Cisco_Labs/Lab-XX_...` to populate this table.")
 
     with open(README_PATH, "r", encoding="utf-8") as f:
         content = f.read()
@@ -260,12 +275,22 @@ def update_readme():
             flags=re.DOTALL
         )
 
-    # Replace TABLE section
-    table_pattern = r"(<!-- EXPERIMENTS_TABLE_START -->)(.*?)(<!-- EXPERIMENTS_TABLE_END -->)"
-    if re.search(table_pattern, content, flags=re.DOTALL):
+    # Replace EXPERIMENTS TABLE section
+    exp_table_pattern = r"(<!-- EXPERIMENTS_TABLE_START -->)(.*?)(<!-- EXPERIMENTS_TABLE_END -->)"
+    if re.search(exp_table_pattern, content, flags=re.DOTALL):
         content = re.sub(
-            table_pattern,
-            f"\\1\n{table_block}\n\\3",
+            exp_table_pattern,
+            f"\\1\n{exp_table_block}\n\\3",
+            content,
+            flags=re.DOTALL
+        )
+
+    # Replace CISCO LABS TABLE section
+    cisco_table_pattern = r"(<!-- CISCO_LABS_TABLE_START -->)(.*?)(<!-- CISCO_LABS_TABLE_END -->)"
+    if re.search(cisco_table_pattern, content, flags=re.DOTALL):
+        content = re.sub(
+            cisco_table_pattern,
+            f"\\1\n{cisco_table_block}\n\\3",
             content,
             flags=re.DOTALL
         )
@@ -273,7 +298,7 @@ def update_readme():
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(content)
 
-    print(f"Successfully updated README.md with {count} experiments.")
+    print(f"Successfully updated README.md with {exp_count} experiments and {cisco_count} Cisco labs.")
 
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
-name: Auto-Update README Experiments Table
+name: Auto-Update README Experiments & Labs Table
 
 on:
   push:
     paths:
       - 'Experiments/**'
+      - 'Cisco_Labs/**'
       - 'scripts/**'
       - '.github/workflows/update-readme.yml'
     branches:
@@ -33,6 +34,6 @@ jobs:
       - name: Commit and Push README Updates
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "docs(readme): 🤖 auto-generate experiment READMEs & update main metrics [skip ci]"
-          file_pattern: 'README.md Experiments/**/README.md'
+          commit_message: "docs(readme): 🤖 auto-generate lab READMEs & update main metrics [skip ci]"
+          file_pattern: 'README.md Experiments/**/README.md Cisco_Labs/**/README.md'
           commit_author: 'GitHub Actions Bot <actions@github.com>'

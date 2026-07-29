@@ -20,9 +20,9 @@
 
 ## 📌 About The Repository
 
-Welcome to the **Computer Networks (CN) Laboratory** repository! This repository contains practical implementations, network topology files (`.pkt`), high-resolution diagrams (`.png`), and detailed analytical lab reports for university-level Computer Networks experiments.
+Welcome to the **Computer Networks (CN) Laboratory** repository! This repository contains practical implementations, network topology files (`.pkt`), high-resolution diagrams (`.png`), and detailed analytical lab reports for university-level Computer Networks experiments and custom Cisco Packet Tracer projects.
 
-> 🤖 **Automated README**: This repository features an automated GitHub Actions workflow (`.github/workflows/update-readme.yml`) that scans the `Experiments/` folder on every push, calculates progress metrics, and updates the table below automatically!
+> 🤖 **Automated README**: This repository features an automated GitHub Actions workflow (`.github/workflows/update-readme.yml`) that scans both `Experiments/` and `Cisco_Labs/` on every push, calculates progress metrics, auto-generates missing notes, and updates both summary tables automatically!
 
 ---
 
@@ -31,7 +31,8 @@ Welcome to the **Computer Networks (CN) Laboratory** repository! This repository
 <!-- EXPERIMENTS_STATS_START -->
 | Metric | Value |
 | :--- | :--- |
-| 🧪 **Completed Experiments** | **2 / 10** |
+| 🧪 **Completed Core Experiments** | **2 / 10** |
+| 📡 **Additional Cisco Labs & Projects** | **1 Total** |
 | 📊 **Completion Rate** | `[████░░░░░░░░░░░░░░░░] 20%` |
 | 📅 **Last Updated** | `2026-07-29` |
 | ⚡ **Status** | ![Active Development](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square) |
@@ -39,14 +40,24 @@ Welcome to the **Computer Networks (CN) Laboratory** repository! This repository
 
 ---
 
-## 🧪 Experiments Summary
+## 🧪 Core Experiments Summary
 
 <!-- EXPERIMENTS_TABLE_START -->
-| Exp # | Experiment Title | 📥 Direct Download (.pkt) | 📁 Explore Details | Included Assets | Status |
+| ID # | Title / Topic | 📥 Direct Download (.pkt) | 📁 Explore Details | Included Assets | Status |
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | **Exp-01** | **Basic Local Network Setup & PC Configuration** | [![Download PKT](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Experiments/Exp-01_Basic_Local_Network/Exp-01_Basic_Local_Network.pkt) | [![View Details](https://img.shields.io/badge/📁_View-Details-2088FF?style=for-the-badge)](Experiments/Exp-01_Basic_Local_Network/) | [`📄 Report`](Experiments/Exp-01_Basic_Local_Network/report.pdf) • [`📝 Notes`](Experiments/Exp-01_Basic_Local_Network/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) |
 | **Exp-02** | **Network Topologies (Bus, Star, Ring & Mesh)** | [![Download PKT](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Experiments/Exp-02_Network_Topologies/Exp-02_Network_Topologies.pkt) | [![View Details](https://img.shields.io/badge/📁_View-Details-2088FF?style=for-the-badge)](Experiments/Exp-02_Network_Topologies/) | [`📝 Notes`](Experiments/Exp-02_Network_Topologies/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) |
 <!-- EXPERIMENTS_TABLE_END -->
+
+---
+
+## 📡 Additional Cisco Labs & Projects
+
+<!-- CISCO_LABS_TABLE_START -->
+| ID # | Title / Topic | 📥 Direct Download (.pkt) | 📁 Explore Details | Included Assets | Status |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| **Lab-01** | **Multi Area OSPF** | [![Download PKT](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Cisco_Labs/Lab-01_Multi_Area_OSPF/ospf_topology.pkt) | [![View Details](https://img.shields.io/badge/📁_View-Details-2088FF?style=for-the-badge)](Cisco_Labs/Lab-01_Multi_Area_OSPF/) | [`📝 Notes`](Cisco_Labs/Lab-01_Multi_Area_OSPF/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) |
+<!-- CISCO_LABS_TABLE_END -->
 
 ---
 
@@ -57,7 +68,7 @@ computer-networks-lab/
 ├── .github/
 │   └── workflows/
 │       └── update-readme.yml     # 🤖 GitHub Actions workflow for auto updating README
-├── Experiments/                  # 🧪 Experiment source folders
+├── Experiments/                  # 🧪 Core syllabus experiment folders
 │   ├── Exp-01_Basic_Local_Network/
 │   │   ├── README.md             # 📝 Experiment objectives & instructions
 │   │   ├── topology.pkt          # 💾 Cisco Packet Tracer binary topology
@@ -65,27 +76,33 @@ computer-networks-lab/
 │   │   └── report.pdf            # 📄 Lab report & observation table
 │   ├── Exp-02_Network_Topologies/
 │   └── ...
+├── Cisco_Labs/                   # 📡 Additional Cisco Packet Tracer labs & projects
+│   ├── Lab-01_Multi_Area_OSPF/
+│   │   ├── topology.pkt          # 💾 Cisco Packet Tracer binary topology
+│   │   └── README.md             # 📝 Auto-generated lab notes
+│   └── ...
 ├── Reports/                      # 📄 Global lab reports & docs archive
 ├── Images/                       # 🖼️ Repository graphics & badges
 ├── scripts/
 │   └── update_readme.py          # ⚙️ Python script for dynamic README updates
 ├── .gitignore                    # 🙈 Git ignore rules
-├── CONTRIBUTING.md               # 🤝 Guidelines for adding experiments
+├── CONTRIBUTING.md               # 🤝 Guidelines for adding experiments & labs
 ├── LICENSE                       # 📜 MIT License
 └── README.md                     # 📖 Main repository overview
 ```
 
 ---
 
-## 🚀 How to Add New Experiments (Directly on GitHub.com)
+## 🚀 How to Add New Experiments & Cisco Work (Directly on GitHub.com)
 
-Adding a new experiment can be done **directly in your web browser** without using terminal commands:
+Adding a new experiment or Cisco Packet Tracer lab can be done **directly in your web browser** without using terminal commands:
 
 1. Open your repository on **GitHub.com** and click **Add file** ➔ **Upload files**.
-2. Drag & drop your `.pkt` file and specify the experiment folder path, e.g.:
-   `Experiments/Exp-05_OSPF_Routing/topology.pkt`
+2. Drag & drop your `.pkt` file and specify the target folder path:
+   - For syllabus experiments: `Experiments/Exp-05_OSPF_Routing/topology.pkt`
+   - For extra Cisco labs: `Cisco_Labs/Lab-01_Multi_Area_OSPF/topology.pkt`
 3. Click **Commit changes**.
-4. 🤖 **GitHub Actions** will automatically run in the background, generate `Experiments/Exp-05_OSPF_Routing/README.md`, update the completed count, progress bar, and summary table above within seconds!
+4. 🤖 **GitHub Actions** will automatically run in the background, generate `README.md` inside your lab folder, update the completed counts, progress bar, and summary tables above within seconds!
 
 For detailed steps, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
