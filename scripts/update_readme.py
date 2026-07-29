@@ -6,13 +6,25 @@ Automated script for Computer Networks Lab repository:
 1. Scans `Experiments/` for experiment folders.
 2. Automatically generates an experiment-specific `README.md` inside any experiment
    folder if only a `.pkt` file is uploaded by the user.
-3. Updates the root `README.md` statistics and summary table.
+3. Updates the root `README.md` statistics and summary table with direct 📥 Download .pkt links
+   and 📁 View Details shortcuts.
 """
 
 import os
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
+
+# Ensure UTF-8 output encoding for standard output on Windows
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
+# Repository Metadata
+REPO_OWNER = "shreyashmane-dev"
+REPO_NAME = "computer-networks-lab"
+BRANCH = "main"
+RAW_BASE_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/raw/{BRANCH}"
 
 # Paths
 REPO_ROOT = Path(__file__).parent.parent.resolve()
@@ -55,6 +67,7 @@ def get_title_from_readme(exp_readme: Path, folder_name: str) -> str:
 def generate_experiment_readme_content(exp_code: str, title: str, folder_name: str, pkt_file: str = None) -> str:
     """Generate default README.md content for an experiment folder."""
     pkt_info = f"`{pkt_file}`" if pkt_file else "Cisco Packet Tracer (`.pkt`)"
+    pkt_download = f"[📥 **Download {pkt_file}**]({RAW_BASE_URL}/Experiments/{folder_name}/{pkt_file})" if pkt_file else ""
     
     content = f"""# {exp_code}: {title}
 
@@ -64,8 +77,9 @@ def generate_experiment_readme_content(exp_code: str, title: str, folder_name: s
 
 ---
 
-## 💾 Topology File
+## 💾 Topology File & Direct Download
 - **Packet Tracer File**: {pkt_info}
+- {pkt_download}
 - Open this file in **Cisco Packet Tracer v8.x+** to inspect the configuration and simulate traffic.
 
 ---
@@ -90,12 +104,6 @@ def generate_experiment_readme_content(exp_code: str, title: str, folder_name: s
 """
     return content
 
-
-import sys
-
-# Ensure UTF-8 output encoding for standard output on Windows
-if hasattr(sys.stdout, 'reconfigure'):
-    sys.stdout.reconfigure(encoding='utf-8')
 
 def ensure_experiment_readme(exp_dir: Path, exp_code: str, title: str, pkt_file: str = None) -> bool:
     """Ensure an experiment folder has a README.md file. Creates one if missing."""
@@ -143,12 +151,16 @@ def scan_experiments():
         has_readme = (exp_dir / "README.md").is_file()
         rel_path = f"Experiments/{folder_name}".replace("\\", "/")
 
+        # Build direct raw download link for .pkt file
+        raw_pkt_url = f"{RAW_BASE_URL}/{rel_path}/{pkt_file}" if pkt_file else None
+
         experiments.append({
             "code": exp_code,
             "folder_name": folder_name,
             "title": title,
             "rel_path": rel_path,
             "pkt_file": pkt_file,
+            "raw_pkt_url": raw_pkt_url,
             "png_file": png_file,
             "pdf_file": pdf_file,
             "has_readme": has_readme,
@@ -180,41 +192,43 @@ def generate_stats_block(experiments_count: int, target_count: int, last_updated
 
 
 def generate_table_block(experiments) -> str:
-    """Generate the experiments markdown table."""
+    """Generate the experiments markdown table with direct download buttons and folder links."""
     if not experiments:
         return "*No experiments found yet. Add folders under `Experiments/Exp-XX_...` to populate this table.*"
 
     table_lines = [
-        "| Exp # | Experiment Title | Assets & Topology | Status | Folder Link |",
-        "| :---: | :--- | :--- | :---: | :---: |"
+        "| Exp # | Experiment Title | 📥 Direct Download (.pkt) | 📁 Explore Details | Included Assets | Status |",
+        "| :---: | :--- | :---: | :---: | :--- | :---: |"
     ]
 
     for exp in experiments:
         code = exp["code"]
         title = exp["title"]
         rel_path = exp["rel_path"]
+        raw_pkt_url = exp["raw_pkt_url"]
 
-        # Build assets list
-        assets = []
-        if exp["pkt_file"]:
-            assets.append(f"[`💾 Topology (.pkt)`]({rel_path}/{exp['pkt_file']})")
+        # Download button/link
+        if raw_pkt_url:
+            download_btn = f"[![Download PKT](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)]({raw_pkt_url})"
         else:
-            assets.append("*(No .pkt file)*")
+            download_btn = "*(No .pkt file)*"
 
+        # Explore details / folder link button
+        folder_btn = f"[![View Details](https://img.shields.io/badge/📁_View-Details-2088FF?style=for-the-badge)]({rel_path}/)"
+
+        # Additional assets indicator
+        assets = []
         if exp["png_file"]:
             assets.append(f"[`🖼️ Diagram`]({rel_path}/{exp['png_file']})")
-        
         if exp["pdf_file"]:
             assets.append(f"[`📄 Report`]({rel_path}/{exp['pdf_file']})")
-
         if exp["has_readme"]:
             assets.append(f"[`📝 Notes`]({rel_path}/README.md)")
 
-        assets_str = " • ".join(assets)
+        assets_str = " • ".join(assets) if assets else "*(Notes Auto-Generated)*"
         status_badge = "![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github)"
-        folder_link = f"[`📁 {exp['folder_name']}`]({rel_path})"
 
-        table_lines.append(f"| **{code}** | {title} | {assets_str} | {status_badge} | {folder_link} |")
+        table_lines.append(f"| **{code}** | **{title}** | {download_btn} | {folder_btn} | {assets_str} | {status_badge} |")
 
     return "\n".join(table_lines)
 

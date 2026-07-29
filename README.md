@@ -42,10 +42,10 @@ Welcome to the **Computer Networks (CN) Laboratory** repository! This repository
 ## 🧪 Experiments Summary
 
 <!-- EXPERIMENTS_TABLE_START -->
-| Exp # | Experiment Title | Assets & Topology | Status | Folder Link |
-| :---: | :--- | :--- | :---: | :---: |
-| **Exp-01** | Basic Local Network Setup & PC Configuration | [`💾 Topology (.pkt)`](Experiments/Exp-01_Basic_Local_Network/Exp-01_Basic_Local_Network.pkt) • [`📄 Report`](Experiments/Exp-01_Basic_Local_Network/report.pdf) • [`📝 Notes`](Experiments/Exp-01_Basic_Local_Network/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-01_Basic_Local_Network`](Experiments/Exp-01_Basic_Local_Network) |
-| **Exp-02** | Network Topologies (Bus, Star, Ring & Mesh) | [`💾 Topology (.pkt)`](Experiments/Exp-02_Network_Topologies/Exp-02_Network_Topologies.pkt) • [`📝 Notes`](Experiments/Exp-02_Network_Topologies/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) | [`📁 Exp-02_Network_Topologies`](Experiments/Exp-02_Network_Topologies) |
+| Exp # | Experiment Title | 📥 Direct Download (.pkt) | 📁 Explore Details | Included Assets | Status |
+| :---: | :--- | :---: | :---: | :--- | :---: |
+| **Exp-01** | **Basic Local Network Setup & PC Configuration** | [![Download PKT](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Experiments/Exp-01_Basic_Local_Network/Exp-01_Basic_Local_Network.pkt) | [![View Details](https://img.shields.io/badge/📁_View-Details-2088FF?style=for-the-badge)](Experiments/Exp-01_Basic_Local_Network/) | [`📄 Report`](Experiments/Exp-01_Basic_Local_Network/report.pdf) • [`📝 Notes`](Experiments/Exp-01_Basic_Local_Network/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) |
+| **Exp-02** | **Network Topologies (Bus, Star, Ring & Mesh)** | [![Download PKT](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Experiments/Exp-02_Network_Topologies/Exp-02_Network_Topologies.pkt) | [![View Details](https://img.shields.io/badge/📁_View-Details-2088FF?style=for-the-badge)](Experiments/Exp-02_Network_Topologies/) | [`📝 Notes`](Experiments/Exp-02_Network_Topologies/README.md) | ![Completed](https://img.shields.io/badge/Completed-success?style=flat-square&logo=github) |
 <!-- EXPERIMENTS_TABLE_END -->
 
 ---
