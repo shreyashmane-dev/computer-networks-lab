@@ -1,62 +1,103 @@
-# Experiment 03: Case Study of Networking Devices
+# Experiment No.: 3
 
-**Date:** 11-08-2026  
-**Subject:** Computer Networks Laboratory  
-
----
-
-## 🎯 Objectives
-- Study the operational principles, architecture, and functions of key network intermediate devices.
-- Understand the OSI layer at which each network device operates.
-- Analyze collision domains, broadcast domains, and packet forwarding techniques.
+**Aim:** Case Study on Networking Devices and Transmission Media
 
 ---
 
-## 🖥️ Overview of Networking Devices
+### **PART A: NETWORKING DEVICES**
 
-| Device | Primary OSI Layer | Primary Function | Collision Domain | Broadcast Domain | Addressing Used |
-| :--- | :---: | :--- | :---: | :---: | :---: |
-| **Repeater** | Layer 1 (Physical) | Regenerates weak electrical/optical signals | 1 per segment | 1 per segment | None |
-| **Hub** | Layer 1 (Physical) | Multi-port repeater; broadcasts electrical signals to all ports | 1 (Shared) | 1 (Shared) | None |
-| **Bridge** | Layer 2 (Data Link) | Filters and forwards frames based on MAC addresses | 1 per port | 1 (Shared) | MAC Address |
-| **Switch** | Layer 2 (Data Link) | High-speed multi-port bridge with hardware ASIC switching | 1 per port (Isolated) | 1 (per VLAN) | MAC Address |
-| **Router** | Layer 3 (Network) | Forwards IP packets between different networks using routing tables | 1 per port | 1 per port (Breaks Broadcast) | IP Address |
-| **Gateway** | Layer 4–7 (Transport–App) | Protocol translator between incompatible network architectures | Per interface | Per interface | IP / Protocol headers |
-| **Access Point (AP)** | Layer 2 (Data Link) | Connects wireless (802.11) devices to a wired Ethernet LAN | Shared wireless medium | 1 per SSID/VLAN | MAC Address |
-| **Modem** | Layer 1 / 2 | Modulates digital signals to analog and vice-versa for WAN transmission | Point-to-Point | Point-to-Point | Carrier Frequency |
-| **NIC** | Layer 1 & 2 | Hardware interface connecting a host to the physical network | 1 | 1 | Hardware MAC Address |
+1. **Hub (Multiport Repeater)**
+   * **OSI Layer:** Layer 1 (Physical Layer).
+   * **Working Principle & Purpose:** Receives a signal from one port, regenerates the corrupted bits to remove noise, and broadcasts the signal out of all other outgoing ports to every station on the network without filtering capability.
+   * **Ports:** Multiport device (4, 8, 16, or 24 ports).
+
+2. **Switch (Two-Layer Switch)**
+   * **OSI Layer:** Layer 2 (Data Link Layer & Physical Layer).
+   * **Working Principle & Purpose:** Inspects destination MAC addresses in incoming frames and uses a dynamically learned MAC address table to forward frames directly to the specific destination port, eliminating collisions.
+   * **Ports:** Multiport device (8, 16, 24, or 48 ports).
+
+3. **Router (Three-Layer Switch)**
+   * **OSI Layer:** Layer 3 (Network Layer, Data Link Layer, & Physical Layer).
+   * **Working Principle & Purpose:** Connects independent networks; inspects destination logical IP addresses in incoming packets, consults its routing table, and forwards packets along optimum paths. It changes physical MAC addresses at each hop.
+   * **Ports:** Multi-interface (FastEthernet, GigabitEthernet, Serial WAN interfaces).
+
+4. **Bridge**
+   * **OSI Layer:** Layer 2 (Data Link Layer & Physical Layer).
+   * **Working Principle & Purpose:** Connects two LAN segments; regenerates signals and filters traffic by checking source and destination MAC addresses before forwarding.
+
+5. **Repeater**
+   * **OSI Layer:** Layer 1 (Physical Layer).
+   * **Working Principle & Purpose:** Receives weak or attenuated signals over long cable distances, regenerates and retimes the original bit pattern, and retransmits the refreshed signal to extend physical coverage.
+
+6. **Gateway**
+   * **OSI Layer:** Operates across all 7 OSI Layers.
+   * **Working Principle & Purpose:** Serves as an intermediary converter between two completely different protocol suites or system architectures (e.g., connecting a TCP/IP network to a proprietary mainframe network).
+
+7. **Modem (Modulator-Demodulator)**
+   * **OSI Layer:** Layer 1 (Physical Layer).
+   * **Working Principle & Purpose:** Converts digital signals from a computer into analog signals for transmission over telephone/cable lines (Modulation) and converts incoming analog signals back into digital bits (Demodulation).
+
+8. **Wireless Access Point (AP)**
+   * **OSI Layer:** Layer 2 (Data Link Layer) & Layer 1 (Physical Layer).
+   * **Working Principle & Purpose:** Connects wireless stations (gadgets) using radio frequency signals to a wired local area network in an Infrastructure Basic Service Set (BSS).
+
+9. **Firewall**
+   * **OSI Layer:** Layers 3, 4, and 7 (Network, Transport, and Application Layers).
+   * **Working Principle & Purpose:** Monitors and filters incoming and outgoing network traffic based on predefined security policies to protect against unauthorized access and cyber threats.
+
+10. **Network Interface Card (NIC)**
+    * **OSI Layer:** Layer 2 (Data Link Layer) & Layer 1 (Physical Layer).
+    * **Working Principle & Purpose:** Hardware circuit board installed inside a computer that provides the physical connection to the network medium and holds the unique 48-bit physical MAC address.
 
 ---
 
-## 🔍 Detailed Analysis of Devices
+### **PART B: TRANSMISSION MEDIA (NETWORK CABLES)**
 
-### 1. Network Interface Card (NIC)
-- **Layer:** Layer 1 & Layer 2
-- **Function:** Provides physical connectivity to a transmission medium (Ethernet or Wi-Fi) and encapsulates data into frames with a burned-in 48-bit physical MAC address (e.g., `00:1A:2B:3C:4D:5E`).
+1. **Twisted-Pair Cable (UTP / STP):**
+   * **Construction:** Consists of pairs of color-coded insulated copper conductors twisted together to minimize crosstalk and electromagnetic interference. Available as Unshielded (UTP) or Shielded (STP with metal foil).
+   * **Speed & Distance:** 10 Mbps to 10 Gbps (Cat 5e, Cat 6, Cat 7); Maximum distance: **100 meters**.
+   * **Connector:** **RJ-45** (Male plug and Female jack).
 
-### 2. Hub
-- **Layer:** Layer 1 (Physical)
-- **Function:** Acts as a multiport signal repeater. Any signal received on one port is blindly repeated to all other connected ports.
-- **Limitation:** Half-duplex operation, prone to collisions, high network congestion.
+2. **Coaxial Cable:**
+   * **Construction:** Central inner copper conductor surrounded by an insulating layer, outer braided metallic shield, and protective plastic cover.
+   * **Speed & Distance:** 10 Mbps (Thinnet / Thicknet); Maximum distance: **185m (10Base2)** to **500m (10Base5)**.
+   * **Connector:** **BNC** (BNC T-connector, BNC terminator).
 
-### 3. Switch
-- **Layer:** Layer 2 (Data Link)
-- **Function:** Operates in full duplex mode. Maintains a dynamic MAC Address Table (CAM Table) through source address learning.
-- **Forwarding Methods:** Store-and-Forward, Cut-Through, and Fragment-Free.
+3. **Optical Fiber Cable:**
+   * **Construction:** Glass or plastic core surrounded by cladding and a protective buffer, transmitting data as light pulses using total internal reflection.
+   * **Speed & Distance:** 100 Mbps to 10+ Gbps; Maximum distance: **2 km to 40+ km**.
+   * **Connector:** **ST**, **SC**, **LC**.
 
-### 4. Router
-- **Layer:** Layer 3 (Network)
-- **Function:** Interconnects heterogeneous network segments (LAN to WAN). Inspects destination IP addresses and routes packets using dynamic routing protocols (e.g., OSPF, RIP, BGP) or static routes.
-- **Key Characteristic:** Stops Layer 2 broadcast frames from crossing interfaces, confining broadcasts within individual subnets.
-
-### 5. Gateway
-- **Layer:** Layers 4 to 7 (Transport through Application)
-- **Function:** Acts as a protocol converter or translator between two entirely different network architectures or protocol stacks (e.g., connecting an IPv4 network to an IPv6 network or translating industrial Modbus to TCP/IP).
+4. **Ethernet Cable Pinout Types:**
+   * **Straight-Through Cable:** Both ends wired to the same standard (T568B to T568B). Connects **different devices** (e.g., PC to Switch, Switch to Router).
+   * **Crossover Cable:** Transmit and Receive pairs swapped at one end (T568A to T568B). Connects **similar devices** (e.g., PC to PC, Switch to Switch).
+   * **Rollover (Console) Cable:** Pin 1 to Pin 8, Pin 2 to Pin 7 (completely reversed). Used to connect a PC's serial/USB port to a Cisco Router or Switch **console port** for configuration.
 
 ---
 
-## 📌 Summary & Conclusion
-Each networking device is engineered for a specific layer of the OSI model:
-- **Layer 1 devices (Hubs, Repeaters)** simply handle physical bits and electrical signaling.
-- **Layer 2 devices (Switches, Bridges)** segment collision domains using MAC addresses.
-- **Layer 3 devices (Routers)** segment broadcast domains and direct traffic between independent IP networks.
+### **PART D: COMPARATIVE STUDY MATRIX**
+
+| Parameters | Hub | Switch | Router | Bridge | Gateway |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **OSI Layer** | Layer 1 (Physical) | Layer 2 (Data Link) | Layer 3 (Network) | Layer 2 (Data Link) | Layers 1–7 |
+| **Data Unit** | Bits | Frames | Packets / Datagrams | Frames | Messages / Data |
+| **Addressing Used** | None | MAC Address | IP Address | MAC Address | Protocol Addresses |
+| **Data Forwarding** | Broadcast | Unicast / Filtering | Routing / Unicast | Filtering / Forwarding | Protocol Translation |
+| **Collision Domains** | 1 Single Domain | Per-port Domain | Per-port Domain | Separate Domains | Separate Domains |
+
+---
+
+### **PART C: PRACTICAL ACTIVITY (LAB COMPONENT IDENTIFICATION)**
+
+| Sr. No. | Device / Cable | Model / Specifications | Manufacturer | Purpose |
+| :---: | :--- | :--- | :--- | :--- |
+| **1** | Ethernet Switch | Cisco 2960 24-Port FastEthernet | Cisco Systems | Connects multiple lab PCs in a local star topology. |
+| **2** | Network Router | Cisco 1941 Integrated Services Router | Cisco Systems | Provides inter-VLAN routing and default gateway connectivity. |
+| **3** | UTP Cable | Category 6 (Cat6) Unshielded Twisted Pair | D-Link / Amp | Transmits 1 Gbps data up to 100 meters between PC and Switch. |
+| **4** | Cable Connector | RJ-45 Male Connector | D-Link | Terminates 8-wire UTP cable ends for insertion into NIC ports. |
+| **5** | Network Adapter | Realtek PCIe Gigabit Ethernet NIC | Realtek | Hardware card providing 48-bit MAC address for host network access. |
+
+---
+
+### **CONCLUSION**
+Students completed a case study on networking devices and transmission media, gaining understanding of device operations across OSI layers (Hub, Switch, Router, Bridge, Gateway) and physical cabling characteristics (UTP, Coaxial, Fiber, Ethernet pinouts).
