@@ -34,6 +34,9 @@ KNOWN_TITLES = {
     "01": "Basic Local Network Setup & PC Configuration",
     "2": "Network Topologies (Bus, Star, Ring & Mesh)",
     "02": "Network Topologies (Bus, Star, Ring & Mesh)",
+    "9": "Configure DHCP Server",
+    "09": "Configure DHCP Server",
+    "10": "FTP Server Configuration",
 }
 
 
