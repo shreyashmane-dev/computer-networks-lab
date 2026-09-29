@@ -1,28 +1,23 @@
-/*
- * Experiment 07: Implementation of Error Detection Code (CRC)
- * Component: Sender Side (Cyclic Redundancy Check)
- * Date: 07-09-2026
- * 
- * Logic: Appends (k-1) zeros to data where k is generator divisor length,
- * performs binary modulo-2 division (XOR), and appends remainder to form codeword.
- */
-
 #include <iostream>
 #include <string>
+
 using namespace std;
 
 string xorData(string a, string b) {
     string result = "";
-    for (size_t i = 1; i < b.length(); i++) {
-        result += (a[i] == b[i]) ? "0" : "1";
+    for (int i = 1; i < b.length(); i++) {
+        if (a[i] == b[i])
+            result += "0";
+        else
+            result += "1";
     }
     return result;
 }
 
 string modulo2Div(string dividend, string divisor) {
-    size_t pick = divisor.length();
+    int pick = divisor.length();
     string tmp = dividend.substr(0, pick);
-    size_t n = dividend.length();
+    int n = dividend.length();
     
     while (pick < n) {
         if (tmp[0] == '1') {
@@ -45,27 +40,21 @@ string modulo2Div(string dividend, string divisor) {
 }
 
 int main() {
-    string data, generator;
+    string data = "1010000";
+    string generator = "1011";
     
-    cout << "========================================\n";
-    cout << "  CRC ERROR DETECTION - SENDER\n";
-    cout << "========================================\n";
-    cout << "Enter Data Bits (e.g. 1010000): ";
-    cin >> data;
-    cout << "Enter Generator Polynomial (e.g. 1011): ";
-    cin >> generator;
+    cout << "Original Data: " << data << endl;
+    cout << "Generator Polynomial: " << generator << endl;
     
-    size_t gen_len = generator.length();
+    int gen_len = generator.length();
     string padded_data = data + string(gen_len - 1, '0');
+    cout << "Padded Data (with zeros): " << padded_data << endl;
     
     string remainder = modulo2Div(padded_data, generator);
-    string codeword = data + remainder;
+    cout << "Calculated CRC Remainder: " << remainder << endl;
     
-    cout << "\nOriginal Data           : " << data << endl;
-    cout << "Generator Polynomial    : " << generator << endl;
-    cout << "Padded Data (with zeros): " << padded_data << endl;
-    cout << "Calculated CRC Checksum : " << remainder << endl;
-    cout << "Transmitted Codeword    : " << codeword << endl;
+    string codeword = data + remainder;
+    cout << "Final Transmitted Codeword: " << codeword << endl;
     
     return 0;
 }
