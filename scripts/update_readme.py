@@ -3,10 +3,10 @@
 update_readme.py
 
 Automated script for Computer Networks Lab repository:
-1. Scans root directory for experiment folders (e.g. Exp-01_..., Exp-02_...).
-2. Extracts .pkt file and creates direct download button.
-3. Automatically removes any accidental sub-README or report files inside experiment folders.
-4. Updates README.md table with experiments and direct download buttons only.
+1. Scans root directory for experiment folders (Exp-01 to Exp-10).
+2. Generates direct download links for .pkt, sender/receiver .cpp, and case study files.
+3. Formats table using official experiment names and dates.
+4. Updates README.md automatically.
 """
 
 import os
@@ -28,15 +28,48 @@ RAW_BASE_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/raw/{BRANCH}"
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 README_PATH = REPO_ROOT / "README.md"
 
-# Known Titles for nicer formatting (fallback to folder name)
-KNOWN_TITLES = {
-    "1": "Basic Local Network Setup & PC Configuration",
-    "01": "Basic Local Network Setup & PC Configuration",
-    "2": "Network Topologies (Bus, Star, Ring & Mesh)",
-    "02": "Network Topologies (Bus, Star, Ring & Mesh)",
-    "9": "Configure DHCP Server",
-    "09": "Configure DHCP Server",
-    "10": "FTP Server Configuration",
+# Official Experiment Index (Names & Dates)
+EXPERIMENT_INDEX = {
+    "01": {
+        "name": "Design and Configure a Simple Network Topology using Cisco Packet Tracer",
+        "date": "28-07-2026",
+    },
+    "02": {
+        "name": "Configure Different Network Topologies using Cisco Packet Tracer",
+        "date": "04-08-2026",
+    },
+    "03": {
+        "name": "Case Study of Networking Devices",
+        "date": "11-08-2026",
+    },
+    "04": {
+        "name": "Implementation of Framing Methods – Bit Stuffing",
+        "date": "17-08-2026",
+    },
+    "05": {
+        "name": "Implementation of Error Correction Code",
+        "date": "24-08-2026",
+    },
+    "06": {
+        "name": "Implementation of Stop-and-Wait Protocol",
+        "date": "31-08-2026",
+    },
+    "07": {
+        "name": "Implementation of Error Detection Code",
+        "date": "07-09-2026",
+    },
+    "08": {
+        "name": "Implementation of C Program for IP Address Calculation",
+        "date": "22-09-2026",
+    },
+    "09": {
+        "name": "Configuration of DHCP Server using Cisco Packet Tracer",
+        "date": "28-09-2026",
+    },
+    "10": {
+        "name": "Simulation of FTP Working using Cisco Packet Tracer",
+        "date": "29-09-2026",
+    },
 }
 
 
@@ -46,59 +79,89 @@ def natural_sort_key(s):
 
 
 def clean_title_from_folder(folder_name: str, item_num: str) -> str:
-    """Format folder name into a clean title (e.g. Exp-01_Basic_Local_Network -> Basic Local Network)."""
-    if item_num in KNOWN_TITLES:
-        return KNOWN_TITLES[item_num]
-    
+    """Format folder name into a clean title, preferring official index."""
+    if item_num in EXPERIMENT_INDEX:
+        return EXPERIMENT_INDEX[item_num]["name"]
     cleaned = re.sub(r"^(Exp|Experiment|Lab)[\s\-_]*\d+[\s\-_]*", "", folder_name, flags=re.IGNORECASE)
     cleaned = cleaned.replace("_", " ").strip()
     return cleaned if cleaned else folder_name
 
 
 def scan_experiments(root_dir: Path):
-    """Scan root directory for experiment folders containing .pkt files."""
+    """Scan root directory for experiment folders."""
     experiments = []
-
-    # Ignored directories
     ignored = {".git", ".github", "scripts", "__pycache__"}
 
     for entry in root_dir.iterdir():
         if not entry.is_dir() or entry.name in ignored or entry.name.startswith("."):
             continue
 
-        # Look for .pkt file
-        pkt_file = next((f.name for f in entry.iterdir() if f.is_file() and f.suffix.lower() == ".pkt"), None)
-        
-        # Clean up any sub-README.md or unwanted report/image files in experiment folders
-        for unwanted in entry.iterdir():
-            if unwanted.is_file() and unwanted.suffix.lower() != ".pkt":
-                try:
-                    unwanted.unlink()
-                    print(f"[-] Removed extraneous file: {entry.name}/{unwanted.name}")
-                except Exception as e:
-                    print(f"[!] Warning: could not delete {unwanted}: {e}")
-
-        # Check if folder starts with Exp or contains .pkt
-        is_exp = bool(re.match(r"^(Exp|Experiment)", entry.name, re.IGNORECASE)) or (pkt_file is not None)
-        if not is_exp:
+        # Check if folder starts with Exp
+        if not re.match(r"^(Exp|Experiment)", entry.name, re.IGNORECASE):
             continue
 
         folder_name = entry.name
         match = re.search(r"(\d+)", folder_name)
         item_num = match.group(1) if match else "0"
-        item_code = f"Exp-{int(item_num):02d}" if item_num.isdigit() else folder_name
         num_display = f"{int(item_num):02d}" if item_num.isdigit() else item_num
+        item_code = f"Exp-{num_display}"
 
-        title = clean_title_from_folder(folder_name, item_num)
-        raw_pkt_url = f"{RAW_BASE_URL}/{folder_name}/{pkt_file}" if pkt_file else None
+        # Clean up any accidental sub-README.md
+        sub_readme = entry / "README.md"
+        if sub_readme.exists():
+            try:
+                sub_readme.unlink()
+                print(f"[-] Removed sub-readme: {entry.name}/README.md")
+            except Exception:
+                pass
+
+        # Identify files inside folder
+        files = [f for f in entry.iterdir() if f.is_file()]
+        pkt_files = [f.name for f in files if f.suffix.lower() == ".pkt"]
+        cpp_files = [f.name for f in files if f.suffix.lower() == ".cpp"]
+        md_files = [f.name for f in files if f.suffix.lower() == ".md" and f.name.lower() != "readme.md"]
+
+        # Date & Title
+        info = EXPERIMENT_INDEX.get(num_display, {})
+        title = info.get("name", clean_title_from_folder(folder_name, num_display))
+        date = info.get("date", "—")
+
+        # Generate action/download badges
+        badges = []
+        # Packet Tracer
+        for pkt in pkt_files:
+            url = f"{RAW_BASE_URL}/{folder_name}/{pkt}"
+            badges.append(f"[![Download .pkt](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)]({url})")
+
+        # Separate Sender and Receiver C++ files
+        senders = [c for c in cpp_files if "sender" in c.lower()]
+        receivers = [c for c in cpp_files if "receiver" in c.lower()]
+        other_cpp = [c for c in cpp_files if c not in senders and c not in receivers]
+
+        for s in senders:
+            url = f"{RAW_BASE_URL}/{folder_name}/{s}"
+            badges.append(f"[![Sender Code](https://img.shields.io/badge/📤_Sender-.cpp-3776AB?style=for-the-badge&logo=c%2B%2B&logoColor=white)]({url})")
+
+        for r in receivers:
+            url = f"{RAW_BASE_URL}/{folder_name}/{r}"
+            badges.append(f"[![Receiver Code](https://img.shields.io/badge/📥_Receiver-.cpp-2088FF?style=for-the-badge&logo=c%2B%2B&logoColor=white)]({url})")
+
+        for o in other_cpp:
+            url = f"{RAW_BASE_URL}/{folder_name}/{o}"
+            badges.append(f"[![Source Code](https://img.shields.io/badge/💻_Code-.cpp-3776AB?style=for-the-badge&logo=c%2B%2B&logoColor=white)]({url})")
+
+        # Case Study / Documentation
+        for m in md_files:
+            url = f"{folder_name}/{m}"
+            badges.append(f"[![View Case Study](https://img.shields.io/badge/📄_Case-Study-2EA44F?style=for-the-badge&logo=markdown&logoColor=white)]({url})")
 
         experiments.append({
             "num": num_display,
             "code": item_code,
             "folder_name": folder_name,
             "title": title,
-            "pkt_file": pkt_file,
-            "raw_pkt_url": raw_pkt_url,
+            "date": date,
+            "badges": " ".join(badges) if badges else "*(In Progress)*",
         })
 
     experiments.sort(key=lambda x: natural_sort_key(x["code"]))
@@ -106,26 +169,21 @@ def scan_experiments(root_dir: Path):
 
 
 def generate_table(experiments) -> str:
-    """Generate simple markdown table with experiment and download button."""
+    """Generate markdown table with experiment name, date, and download buttons."""
     if not experiments:
-        return "*No experiments found. Add folders like `Exp-01_Title` containing a `.pkt` file.*"
+        return "*No experiments found.*"
 
     table_lines = [
-        "| # | Experiment | Download |",
-        "| :---: | :--- | :---: |"
+        "| # | Proper Experiment Name | Date | Direct Download / Source Code |",
+        "| :---: | :--- | :---: | :--- |"
     ]
 
     for exp in experiments:
         num = exp["num"]
         title = exp["title"]
-        raw_pkt_url = exp["raw_pkt_url"]
-
-        if raw_pkt_url:
-            download_btn = f"[![Download .pkt](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)]({raw_pkt_url})"
-        else:
-            download_btn = "*(No .pkt file)*"
-
-        table_lines.append(f"| **{num}** | **{title}** | {download_btn} |")
+        date = exp["date"]
+        badges = exp["badges"]
+        table_lines.append(f"| **{num}** | **{title}** | `{date}` | {badges} |")
 
     return "\n".join(table_lines)
 
@@ -153,7 +211,6 @@ def update_readme():
             flags=re.DOTALL
         )
     else:
-        # If marker not found, append
         content += f"\n<!-- EXPERIMENTS_TABLE_START -->\n{table_block}\n<!-- EXPERIMENTS_TABLE_END -->\n"
 
     # Also update count badge if present
