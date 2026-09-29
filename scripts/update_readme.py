@@ -4,8 +4,8 @@ update_readme.py
 
 Automated script for Computer Networks Lab repository:
 1. Scans root directory for experiment folders (Exp-01 to Exp-10).
-2. Generates direct download links for .pkt, sender/receiver .cpp, and case study files.
-3. Formats table using official experiment names and dates.
+2. Generates direct clickable download links for each experiment.
+3. Formats table showing only Experiment Number and Experiment Title (clickable for download).
 4. Updates README.md automatically.
 """
 
@@ -28,48 +28,18 @@ RAW_BASE_URL = f"https://github.com/{REPO_OWNER}/{REPO_NAME}/raw/{BRANCH}"
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 README_PATH = REPO_ROOT / "README.md"
 
-# Official Experiment Index (Names & Dates)
-EXPERIMENT_INDEX = {
-    "01": {
-        "name": "Design and Configure a Simple Network Topology using Cisco Packet Tracer",
-        "date": "28-07-2026",
-    },
-    "02": {
-        "name": "Configure Different Network Topologies using Cisco Packet Tracer",
-        "date": "04-08-2026",
-    },
-    "03": {
-        "name": "Case Study of Networking Devices",
-        "date": "11-08-2026",
-    },
-    "04": {
-        "name": "Implementation of Framing Methods – Bit Stuffing",
-        "date": "17-08-2026",
-    },
-    "05": {
-        "name": "Implementation of Error Correction Code",
-        "date": "24-08-2026",
-    },
-    "06": {
-        "name": "Implementation of Stop-and-Wait Protocol",
-        "date": "31-08-2026",
-    },
-    "07": {
-        "name": "Implementation of Error Detection Code",
-        "date": "07-09-2026",
-    },
-    "08": {
-        "name": "Implementation of C Program for IP Address Calculation",
-        "date": "22-09-2026",
-    },
-    "09": {
-        "name": "Configuration of DHCP Server using Cisco Packet Tracer",
-        "date": "28-09-2026",
-    },
-    "10": {
-        "name": "Simulation of FTP Working using Cisco Packet Tracer",
-        "date": "29-09-2026",
-    },
+# Official Experiment Index (Names)
+EXPERIMENT_NAMES = {
+    "01": "Design and Configure a Simple Network Topology using Cisco Packet Tracer",
+    "02": "Configure Different Network Topologies using Cisco Packet Tracer",
+    "03": "Case Study of Networking Devices",
+    "04": "Implementation of Framing Methods – Bit Stuffing",
+    "05": "Implementation of Error Correction Code",
+    "06": "Implementation of Stop-and-Wait Protocol",
+    "07": "Implementation of Error Detection Code",
+    "08": "Implementation of C Program for IP Address Calculation",
+    "09": "Configuration of DHCP Server using Cisco Packet Tracer",
+    "10": "Simulation of FTP Working using Cisco Packet Tracer",
 }
 
 
@@ -80,8 +50,8 @@ def natural_sort_key(s):
 
 def clean_title_from_folder(folder_name: str, item_num: str) -> str:
     """Format folder name into a clean title, preferring official index."""
-    if item_num in EXPERIMENT_INDEX:
-        return EXPERIMENT_INDEX[item_num]["name"]
+    if item_num in EXPERIMENT_NAMES:
+        return EXPERIMENT_NAMES[item_num]
     cleaned = re.sub(r"^(Exp|Experiment|Lab)[\s\-_]*\d+[\s\-_]*", "", folder_name, flags=re.IGNORECASE)
     cleaned = cleaned.replace("_", " ").strip()
     return cleaned if cleaned else folder_name
@@ -121,47 +91,35 @@ def scan_experiments(root_dir: Path):
         cpp_files = [f.name for f in files if f.suffix.lower() == ".cpp"]
         md_files = [f.name for f in files if f.suffix.lower() == ".md" and f.name.lower() != "readme.md"]
 
-        # Date & Title
-        info = EXPERIMENT_INDEX.get(num_display, {})
-        title = info.get("name", clean_title_from_folder(folder_name, num_display))
-        date = info.get("date", "—")
+        title = EXPERIMENT_NAMES.get(num_display, clean_title_from_folder(folder_name, num_display))
 
-        # Generate action/download badges
-        badges = []
-        # Packet Tracer
-        for pkt in pkt_files:
-            url = f"{RAW_BASE_URL}/{folder_name}/{pkt}"
-            badges.append(f"[![Download .pkt](https://img.shields.io/badge/📥_Download-.pkt-005073?style=for-the-badge&logo=cisco&logoColor=white)]({url})")
-
-        # Separate Sender and Receiver C++ files
+        # Check for sender and receiver files
         senders = [c for c in cpp_files if "sender" in c.lower()]
         receivers = [c for c in cpp_files if "receiver" in c.lower()]
         other_cpp = [c for c in cpp_files if c not in senders and c not in receivers]
 
-        for s in senders:
-            url = f"{RAW_BASE_URL}/{folder_name}/{s}"
-            badges.append(f"[![Sender Code](https://img.shields.io/badge/📤_Sender-.cpp-3776AB?style=for-the-badge&logo=c%2B%2B&logoColor=white)]({url})")
-
-        for r in receivers:
-            url = f"{RAW_BASE_URL}/{folder_name}/{r}"
-            badges.append(f"[![Receiver Code](https://img.shields.io/badge/📥_Receiver-.cpp-2088FF?style=for-the-badge&logo=c%2B%2B&logoColor=white)]({url})")
-
-        for o in other_cpp:
-            url = f"{RAW_BASE_URL}/{folder_name}/{o}"
-            badges.append(f"[![Source Code](https://img.shields.io/badge/💻_Code-.cpp-3776AB?style=for-the-badge&logo=c%2B%2B&logoColor=white)]({url})")
-
-        # Case Study / Documentation
-        for m in md_files:
-            url = f"{folder_name}/{m}"
-            badges.append(f"[![View Case Study](https://img.shields.io/badge/📄_Case-Study-2EA44F?style=for-the-badge&logo=markdown&logoColor=white)]({url})")
+        # Construct clickable download entry
+        if pkt_files:
+            download_url = f"{RAW_BASE_URL}/{folder_name}/{pkt_files[0]}"
+            exp_entry = f"[{title}]({download_url})"
+        elif senders and receivers:
+            s_url = f"{RAW_BASE_URL}/{folder_name}/{senders[0]}"
+            r_url = f"{RAW_BASE_URL}/{folder_name}/{receivers[0]}"
+            exp_entry = f"{title} — [📥 Sender]({s_url}) • [📥 Receiver]({r_url})"
+        elif other_cpp:
+            c_url = f"{RAW_BASE_URL}/{folder_name}/{other_cpp[0]}"
+            exp_entry = f"[{title}]({c_url})"
+        elif md_files:
+            m_url = f"{folder_name}/{md_files[0]}"
+            exp_entry = f"[{title}]({m_url})"
+        else:
+            exp_entry = title
 
         experiments.append({
             "num": num_display,
             "code": item_code,
             "folder_name": folder_name,
-            "title": title,
-            "date": date,
-            "badges": " ".join(badges) if badges else "*(In Progress)*",
+            "entry": exp_entry,
         })
 
     experiments.sort(key=lambda x: natural_sort_key(x["code"]))
@@ -169,21 +127,19 @@ def scan_experiments(root_dir: Path):
 
 
 def generate_table(experiments) -> str:
-    """Generate markdown table with experiment name, date, and download buttons."""
+    """Generate minimal markdown table with experiment number and clickable download link."""
     if not experiments:
         return "*No experiments found.*"
 
     table_lines = [
-        "| # | Proper Experiment Name | Date | Direct Download / Source Code |",
-        "| :---: | :--- | :---: | :--- |"
+        "| # | Experiment |",
+        "| :---: | :--- |"
     ]
 
     for exp in experiments:
         num = exp["num"]
-        title = exp["title"]
-        date = exp["date"]
-        badges = exp["badges"]
-        table_lines.append(f"| **{num}** | **{title}** | `{date}` | {badges} |")
+        entry = exp["entry"]
+        table_lines.append(f"| **{num}** | {entry} |")
 
     return "\n".join(table_lines)
 
@@ -212,10 +168,6 @@ def update_readme():
         )
     else:
         content += f"\n<!-- EXPERIMENTS_TABLE_START -->\n{table_block}\n<!-- EXPERIMENTS_TABLE_END -->\n"
-
-    # Also update count badge if present
-    badge_pattern = r"(https://img\.shields\.io/badge/Experiments-)(\d+)(_Completed-success\?style=for-the-badge)"
-    content = re.sub(badge_pattern, f"\\g<1>{exp_count}\\g<3>", content)
 
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(content)
