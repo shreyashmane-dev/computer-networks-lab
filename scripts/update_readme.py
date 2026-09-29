@@ -40,6 +40,7 @@ EXPERIMENT_NAMES = {
     "08": "Implementation of C Program for IP Address Calculation",
     "09": "Configuration of DHCP Server using Cisco Packet Tracer",
     "10": "Simulation of FTP Working using Cisco Packet Tracer",
+    "11": "Simulation of ARP Working using Cisco Packet Tracer",
 }
 
 
