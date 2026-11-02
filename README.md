@@ -22,6 +22,9 @@
 | **09** | [Configuration of DHCP Server using Cisco Packet Tracer](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Exp-09_Configuration_DHCP_Server/Exp-09_CONFIG_DHCP_SERVER.pkt) |
 | **10** | [Simulation of FTP Working using Cisco Packet Tracer](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Exp-10_Simulation_FTP_Working/Exp-10_FTP_CONFIG.pkt) |
 | **11** | [Simulation of ARP Working using Cisco Packet Tracer](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Exp-11_Simulation_ARP_Working/Exp-11_Simulation_ARP_Working.pkt) |
+| **12** | [Simulation of SMTP Working using Cisco Packet Tracer](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Exp-12_SMTP/Exp-12_SMTP.pkt) |
+| **13** | [Implementation of Shortest Path Routing Algorithm (Dijkstra's Algorithm)](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Exp-13_shortest_path/Exp-13_Shortest_path.c) |
+| **14** | Implementation of TCP Client-Server Socket Programming — [📥 Server](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Exp-14_TCP/server.c) • [📥 Client](https://github.com/shreyashmane-dev/computer-networks-lab/raw/main/Exp-14_TCP/client.c) |
 <!-- EXPERIMENTS_TABLE_END -->
 
 ---

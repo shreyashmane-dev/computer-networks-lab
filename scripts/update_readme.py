@@ -3,7 +3,7 @@
 update_readme.py
 
 Automated script for Computer Networks Lab repository:
-1. Scans root directory for experiment folders (Exp-01 to Exp-10).
+1. Scans root directory for experiment folders (Exp-01 to Exp-14).
 2. Generates direct clickable download links for each experiment.
 3. Formats table showing only Experiment Number and Experiment Title (clickable for download).
 4. Updates README.md automatically.
@@ -41,6 +41,9 @@ EXPERIMENT_NAMES = {
     "09": "Configuration of DHCP Server using Cisco Packet Tracer",
     "10": "Simulation of FTP Working using Cisco Packet Tracer",
     "11": "Simulation of ARP Working using Cisco Packet Tracer",
+    "12": "Simulation of SMTP Working using Cisco Packet Tracer",
+    "13": "Implementation of Shortest Path Routing Algorithm (Dijkstra's Algorithm)",
+    "14": "Implementation of TCP Client-Server Socket Programming",
 }
 
 
@@ -89,15 +92,25 @@ def scan_experiments(root_dir: Path):
         # Identify files inside folder
         files = [f for f in entry.iterdir() if f.is_file()]
         pkt_files = [f.name for f in files if f.suffix.lower() == ".pkt"]
-        cpp_files = [f.name for f in files if f.suffix.lower() == ".cpp"]
+        code_files = [f.name for f in files if f.suffix.lower() in [".cpp", ".c"]]
         md_files = [f.name for f in files if f.suffix.lower() == ".md" and f.name.lower() != "readme.md"]
 
         title = EXPERIMENT_NAMES.get(num_display, clean_title_from_folder(folder_name, num_display))
 
         # Check for sender and receiver files
-        senders = [c for c in cpp_files if "sender" in c.lower()]
-        receivers = [c for c in cpp_files if "receiver" in c.lower()]
-        other_cpp = [c for c in cpp_files if c not in senders and c not in receivers]
+        senders = [c for c in code_files if "sender" in c.lower()]
+        receivers = [c for c in code_files if "receiver" in c.lower() and "destuffing" not in c.lower() and "crc" not in c.lower() and "hamming" not in c.lower()]
+        if not receivers:
+            receivers = [c for c in code_files if "receiver" in c.lower()]
+            
+        # Check for server and client files
+        servers = [c for c in code_files if "server" in c.lower()]
+        clients = [c for c in code_files if "client" in c.lower()]
+        # Prefer basic server.c/client.c if present
+        server_main = next((s for s in servers if s.lower() == "server.c"), servers[0] if servers else None)
+        client_main = next((c for c in clients if c.lower() == "client.c"), clients[0] if clients else None)
+
+        other_code = [c for c in code_files if c not in senders and c not in receivers and c not in servers and c not in clients]
 
         # Construct clickable download entry
         if pkt_files:
@@ -107,8 +120,13 @@ def scan_experiments(root_dir: Path):
             s_url = f"{RAW_BASE_URL}/{folder_name}/{senders[0]}"
             r_url = f"{RAW_BASE_URL}/{folder_name}/{receivers[0]}"
             exp_entry = f"{title} — [📥 Sender]({s_url}) • [📥 Receiver]({r_url})"
-        elif other_cpp:
-            c_url = f"{RAW_BASE_URL}/{folder_name}/{other_cpp[0]}"
+        elif server_main and client_main:
+            s_url = f"{RAW_BASE_URL}/{folder_name}/{server_main}"
+            c_url = f"{RAW_BASE_URL}/{folder_name}/{client_main}"
+            exp_entry = f"{title} — [📥 Server]({s_url}) • [📥 Client]({c_url})"
+        elif code_files:
+            target_c = other_code[0] if other_code else code_files[0]
+            c_url = f"{RAW_BASE_URL}/{folder_name}/{target_c}"
             exp_entry = f"[{title}]({c_url})"
         elif md_files:
             m_url = f"{folder_name}/{md_files[0]}"

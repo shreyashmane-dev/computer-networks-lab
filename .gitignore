@@ -25,3 +25,8 @@ ENV/
 .idea/
 *.swp
 *.swo
+
+# Compiled Binaries & Objects
+*.exe
+*.o
+*.obj
